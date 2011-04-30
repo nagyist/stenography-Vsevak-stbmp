@@ -1,0 +1,7 @@
+*.log
+*.tlog
+*.manifest
+*.pdb
+Debug/
+Release/
+*.vcxproj*
