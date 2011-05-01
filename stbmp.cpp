@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "/home/vsevak/workspace/Bmp-manager/bmp.cpp"
 
 using namespace std;
 
@@ -8,8 +7,9 @@ void encrypt(const char* path, string message) {
 	bmp<RGB24> image;
 	try {
 		image.loadImage(path);
-	} catch (exception ex) {
-		cout << "File " << path << " not exists " << endl;
+	} catch (exception* ex) {
+		cout << "File " << path << " not exists, broken or not BMP24" << endl;
+		cout << "Error. Aborted. Retry" << endl;
 		return;
 	}
 
@@ -62,8 +62,8 @@ string decrypt(const char* path) {
 	bmp<RGB24> image;
 	try {
 		image.loadImage(path);
-	} catch (exception ex) {
-		cout << "File " << path << " not exists " << endl;
+	} catch (exception* ex) {
+		cout << "File " << path << " not exists, broken or not BMP24" << endl;
 		return "Error. Aborted. Retry";
 	}
 
@@ -73,10 +73,9 @@ string decrypt(const char* path) {
 	bitset<8> m = bitset<8> (); // Symbol of message
 
 	// Geting chars from img to message
-	for (int i = 0; i <= image.width()*image.height(); i++) {
+	for (int i = 0; i <= image.width() * image.height(); i++) {
 
 		rgb24 pixel;
-
 		image.getPixel(x, y, pixel);
 
 		bitset<8> r = bitset<8> (pixel.red);
