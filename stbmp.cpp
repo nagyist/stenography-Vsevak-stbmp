@@ -19,7 +19,7 @@ void encrypt(string path, string message){
 	for(string::iterator i=message.begin(); i!=message.end(); i++){
 		bmp.get_pixel(x,y,r0,g0,b0);
 
-		m = bitset<8>(unsigned char(*i));
+		m = bitset<8>((unsigned char)(*i));
 
 		bitset<8> r = bitset<8>(r0); 
 		bitset<8> g = bitset<8>(g0);
@@ -90,7 +90,7 @@ string decrypt(string path){
 
 		if (char(m.to_ulong()) == '@') break;
 
-		message += unsigned char(m.to_ulong());
+		message += (unsigned char)(m.to_ulong());
 
 		x +=1;
 		if (x==width){
@@ -103,7 +103,7 @@ string decrypt(string path){
 
 
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	bool flag=1;
 	cout << "You can encrypt or decrypt some message\n" << endl;
