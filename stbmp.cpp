@@ -1,136 +1,142 @@
 #include "stdafx.h"
+#include "/home/vsevak/workspace/Bmp-manager/bmp.cpp"
 
 using namespace std;
 
-void encrypt(string path, string message){
+void encrypt(const char* path, string message) {
 	// Initialization
-	bitmap_image bmp = bitmap_image();
-	try{
-		bmp = bitmap_image(path);
-	} catch(exception ex){
-		cout<<"File "<< path << " not exists "<<endl;
+	bmp<RGB24> image;
+	try {
+		image.loadImage(path);
+	} catch (exception ex) {
+		cout << "File " << path << " not exists " << endl;
 		return;
 	}
-	int width = bmp.width();
+
+	int width = image.width();
 	bitset<8> m;
-	unsigned char r0,g0,b0;
-	int x = 0 ,y = 0;
+	unsigned char r0, g0, b0;
+	uint32_t x = 0, y = 0;
+	rgb24 pixel;
+
 	// Seting lesser bits of img to meaning bits of message
-	for(string::iterator i=message.begin(); i!=message.end(); i++){
-		bmp.get_pixel(x,y,r0,g0,b0);
+	for (string::iterator i = message.begin(); i != message.end(); i++) {
+		image.getPixel(x, y, pixel);
 
-		m = bitset<8>((unsigned char)(*i));
+		m = bitset<8> ((unsigned char) (*i));
 
-		bitset<8> r = bitset<8>(r0); 
-		bitset<8> g = bitset<8>(g0);
-		bitset<8> b = bitset<8>(b0);
+		bitset<8> r = bitset<8> (pixel.red);
+		bitset<8> g = bitset<8> (pixel.green);
+		bitset<8> b = bitset<8> (pixel.blue);
 
-		r[7-6] = m[0];
-		r[7-7] = m[1];
+		r[7 - 6] = m[0];
+		r[7 - 7] = m[1];
 
-		g[7-5] = m[2];
-		g[7-6] = m[3];
-		g[7-7] = m[4];
+		g[7 - 5] = m[2];
+		g[7 - 6] = m[3];
+		g[7 - 7] = m[4];
 
-		b[7-5] = m[5];
-		b[7-6] = m[6];
-		b[7-7] = m[7];
+		b[7 - 5] = m[5];
+		b[7 - 6] = m[6];
+		b[7 - 7] = m[7];
 
-		r0 = r.to_ulong();
-		g0 = g.to_ulong();
-		b0 = b.to_ulong();
+		pixel.red = r.to_ulong();
+		pixel.green = g.to_ulong();
+		pixel.blue = b.to_ulong();
 
-		bmp.set_pixel(x,y,r0,g0,b0);
+		image.setPixel(x, y, pixel);
 
-		x +=1;
-		if (x==width){
-			x=0;
-			y+=1;
+		x += 1;
+		if (x == width) {
+			x = 0;
+			y += 1;
 		}
 	}
 
-	bmp.save_image(path);
+	image.saveImage(path);
 }
 
-
-
-string decrypt(string path){
+string decrypt(const char* path) {
 	// Initialization
 	string message = "";
-	bitmap_image bmp;
-	try{
-		bmp = bitmap_image(path);
-	} catch(exception ex){
-		cout<<"File "<< path << " not exists "<<endl;
+	bmp<RGB24> image;
+	try {
+		image.loadImage(path);
+	} catch (exception ex) {
+		cout << "File " << path << " not exists " << endl;
 		return "Error. Aborted. Retry";
 	}
-	int width = bmp.width();
-	int x=0, y=0;
-	unsigned char r0,g0,b0;
-	bitset<8> m = bitset<8>();	// Symbol of message
+
+	int width = image.width();
+	int x = 0, y = 0;
+	unsigned char r0, g0, b0;
+	bitset<8> m = bitset<8> (); // Symbol of message
+
 	// Geting chars from img to message
-	for(int i=0; i<=bmp.pixel_count(); i++){
+	for (int i = 0; i <= image.width()*image.height(); i++) {
 
-		bmp.get_pixel(x,y,r0,g0,b0);
+		rgb24 pixel;
 
-		bitset<8> r = bitset<8>(r0);
-		bitset<8> g = bitset<8>(g0);
-		bitset<8> b = bitset<8>(b0);
+		image.getPixel(x, y, pixel);
 
-		m[0] = r[7-6];
-		m[1] = r[7-7];
+		bitset<8> r = bitset<8> (pixel.red);
+		bitset<8> g = bitset<8> (pixel.green);
+		bitset<8> b = bitset<8> (pixel.blue);
 
-		m[2] = g[7-5];
-		m[3] = g[7-6];
-		m[4] = g[7-7];
+		m[0] = r[7 - 6];
+		m[1] = r[7 - 7];
 
-		m[5] = b[7-5];
-		m[6] = b[7-6];
-		m[7] = b[7-7];
+		m[2] = g[7 - 5];
+		m[3] = g[7 - 6];
+		m[4] = g[7 - 7];
 
-		if (char(m.to_ulong()) == '@') break;
+		m[5] = b[7 - 5];
+		m[6] = b[7 - 6];
+		m[7] = b[7 - 7];
 
-		message += (unsigned char)(m.to_ulong());
+		if (char(m.to_ulong()) == '@')
+			break;
 
-		x +=1;
-		if (x==width){
-			x=0;
-			y+=1;
+		message += (unsigned char) (m.to_ulong());
+
+		x += 1;
+		if (x == width) {
+			x = 0;
+			y += 1;
 		}
 	}
 	return message;
 }
 
-
-
-int main(int argc, char* argv[])
-{
-	bool flag=1;
+int main(int argc, char* argv[]) {
+	bool flag = 1;
 	cout << "You can encrypt or decrypt some message\n" << endl;
 	while (flag) {
 		cout << "Encrypt or decrypt? (input 1 or 0)" << endl;
-		cin>>flag;
+		cin >> flag;
 		if (flag) {
 			cin.ignore();
 
-			cout << "   Where is yo picture?" << endl << "Use english path"<< endl;
+			cout << "   Where is your picture?" << endl << "Use english path"
+					<< endl;
 			string path;
-			getline(cin,path);
+			getline(cin, path);
 
 			cout << "   Input message to encrypt" << endl;
 			string message;
 			getline(cin, message);
-			message +='@';
+			message += '@';
 
-			encrypt(path, message);
+			encrypt(path.c_str(), message);
 			cout << "\nOK\n" << endl;
-		}
-		else{
-			cout << "   Where is yo picture?" << endl << "Use \"/\" kind'a 'C:/a/b/c.bmp'"<< endl;
+		} else {
+			cout << "   Where is your picture?" << endl << "Use english path"
+					<< endl;
 			string path;
 			cin.ignore();
-			getline(cin,path);
-			cout << decrypt(path);
+			getline(cin, path);
+			cout << decrypt(path.c_str());
 		}
 	}
+	return 0;
 }

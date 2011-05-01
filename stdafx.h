@@ -3,7 +3,7 @@
 #include "targetver.h"
 
 #include <stdio.h>
-#include "bitmap_image.hpp"
+//#include "bitmap_image.hpp"
 #include <iostream>
 #include <stdlib.h>
 #include <bitset>
