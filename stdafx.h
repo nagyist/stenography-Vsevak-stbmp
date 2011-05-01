@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <bitset>
 #include <string>
+#include <stdarg.h>
+
 #include "Bmp-manager/bmp.cpp"
 
 #ifdef __WIN32

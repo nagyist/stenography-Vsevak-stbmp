@@ -2,15 +2,14 @@
 
 using namespace std;
 
-void encrypt(const char* path, string message) {
+bool encrypt(const char* path, string message) {
 	// Initialization
 	bmp<RGB24> image;
 	try {
 		image.loadImage(path);
 	} catch (exception* ex) {
 		cout << "File " << path << " not exists, broken or not BMP24" << endl;
-		cout << "Error. Aborted. Retry" << endl;
-		return;
+		return false;
 	}
 
 	int width = image.width();
@@ -53,23 +52,23 @@ void encrypt(const char* path, string message) {
 		}
 	}
 
-	image.saveImage(path);
+	try {
+		image.saveImage(path);
+	} catch (...) {
+		cout << "Error saving Image." << endl;
+		return false;
+	}
+	return true;
 }
 
 string decrypt(const char* path) {
 	// Initialization
 	string message = "";
 	bmp<RGB24> image;
-	try {
-		image.loadImage(path);
-	} catch (exception* ex) {
-		cout << "File " << path << " not exists, broken or not BMP24" << endl;
-		return "Error. Aborted. Retry";
-	}
+	image.loadImage(path);
 
 	int width = image.width();
 	int x = 0, y = 0;
-	unsigned char r0, g0, b0;
 	bitset<8> m = bitset<8> (); // Symbol of message
 
 	// Geting chars from img to message
@@ -93,7 +92,7 @@ string decrypt(const char* path) {
 		m[6] = b[7 - 6];
 		m[7] = b[7 - 7];
 
-		if (char(m.to_ulong()) == '@')
+		if ((unsigned char)(m.to_ulong()) == '@')
 			break;
 
 		message += (unsigned char) (m.to_ulong());
@@ -104,36 +103,49 @@ string decrypt(const char* path) {
 			y += 1;
 		}
 	}
-	return message;
+	return message + '\n';
 }
 
 int main(int argc, char* argv[]) {
-	bool flag = 1;
-	cout << "You can encrypt or decrypt some message\n" << endl;
-	while (flag) {
-		cout << "Encrypt or decrypt? (input 1 or 0)" << endl;
-		cin >> flag;
-		if (flag) {
-			cin.ignore();
 
-			cout << "   Where is your picture?" << endl;
-			string path;
-			getline(cin, path);
+	string path;
+	string message;
 
-			cout << "   Input message to encrypt" << endl;
-			string message;
-			getline(cin, message);
-			message += '@';
-
-			encrypt(path.c_str(), message);
-			cout << "\nOK\n" << endl;
-		} else {
-			cout << "   Where is your picture?" << endl;
-			string path;
-			cin.ignore();
-			getline(cin, path);
-			cout << decrypt(path.c_str());
-		}
+	if (argc == 2) {
+		cout << decrypt(argv[1]);
+		return 0;
+	} else if (argc == 3) {
+		path = argv[1];
+		message = argv[2];
+		message += "@";
+		encrypt(path.c_str(), message.c_str());
+		return 0;
 	}
+
+	cout << "You can encrypt or decrypt some message\n" << endl;
+	cout << "Hint: you can use command line with args:\n" << endl;
+	cout << "stbmp [PATH]\n"
+			"      [PATH MESSAGE]" << endl;
+	cout << "\tWhere is your picture?" << endl;
+
+	getline(cin, path);
+
+	cout << "\tInput '@' to decrypt or message to encrypt" << endl;
+
+	getline(cin, message);
+
+	const char* p = path.c_str();
+	if (message == "@") {
+		cout << decrypt(p);
+		return 0;
+	}
+
+	message += "@";
+
+	if (encrypt(p, message)) {
+		cout << "\nOK\n" << endl;
+		return 2;
+	}
+
 	return 0;
 }
