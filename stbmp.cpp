@@ -117,8 +117,7 @@ int main(int argc, char* argv[]) {
 		if (flag) {
 			cin.ignore();
 
-			cout << "   Where is your picture?" << endl << "Use english path"
-					<< endl;
+			cout << "   Where is your picture?" << endl;
 			string path;
 			getline(cin, path);
 
@@ -130,8 +129,7 @@ int main(int argc, char* argv[]) {
 			encrypt(path.c_str(), message);
 			cout << "\nOK\n" << endl;
 		} else {
-			cout << "   Where is your picture?" << endl << "Use english path"
-					<< endl;
+			cout << "   Where is your picture?" << endl;
 			string path;
 			cin.ignore();
 			getline(cin, path);
