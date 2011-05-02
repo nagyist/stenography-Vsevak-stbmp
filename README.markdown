@@ -3,6 +3,8 @@ Simple LSB Steganography example
 This is a simple C++ programm that hide message in least bits of bmp24 image.
 [Read more](http://en.wikipedia.org/wiki/Steganography)
 
+*Disclaimer: it is not cryptosystem, just the most easy example of LSB algorythm. Don't use it if you really want to save your info. Autor makes no guarantee of your informathion security and safety. Using program you agree to accept full responsibility for any damage.*
+
 Use bmp lib [Bmp-manager](https://github.com/Shifter/Bmp-manager)
 
 Compilation
