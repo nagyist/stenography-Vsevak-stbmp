@@ -1,4 +1,4 @@
-CC= g++
+CC = g++
 PARAMS= -O3 -static -lpthread
 all:
 	$(CC) ./stbmp.cpp -o ./stbmp $(PARAMS)

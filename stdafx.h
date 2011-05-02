@@ -11,6 +11,3 @@
 
 #include "Bmp-manager/bmp.cpp"
 
-#ifdef __WIN32
-#include <tchar.h>
-#endif

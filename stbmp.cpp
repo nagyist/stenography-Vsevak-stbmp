@@ -14,7 +14,6 @@ bool encrypt(const char* path, string message) {
 
 	int width = image.width();
 	bitset<8> m;
-	unsigned char r0, g0, b0;
 	uint32_t x = 0, y = 0;
 	rgb24 pixel;
 
@@ -92,7 +91,7 @@ string decrypt(const char* path) {
 		m[6] = b[7 - 6];
 		m[7] = b[7 - 7];
 
-		if ((unsigned char)(m.to_ulong()) == '@')
+		if ((unsigned char) (m.to_ulong()) == '@')
 			break;
 
 		message += (unsigned char) (m.to_ulong());
@@ -118,19 +117,24 @@ int main(int argc, char* argv[]) {
 		path = argv[1];
 		message = argv[2];
 		message += "@";
-		encrypt(path.c_str(), message.c_str());
+		if (encrypt(path.c_str(), message.c_str())) {
+			cout << "\tOK" << endl;
+		} else {
+			cout << "Error" << endl;
+			return 2;
+		}
 		return 0;
 	}
 
-	cout << "You can encrypt or decrypt some message\n" << endl;
-	cout << "Hint: you can use command line with args:\n" << endl;
+	cout << "You can encrypt or decrypt some message" << endl;
+	cout << "Hint: you can use command line with args:" << endl;
 	cout << "stbmp [PATH]\n"
 			"      [PATH MESSAGE]" << endl;
-	cout << "\tWhere is your picture?" << endl;
+	cout << ">>> Path to your picture?" << endl;
 
 	getline(cin, path);
 
-	cout << "\tInput '@' to decrypt or message to encrypt" << endl;
+	cout << ">>> Input '@' to decrypt or message to encrypt" << endl;
 
 	getline(cin, message);
 
@@ -144,6 +148,9 @@ int main(int argc, char* argv[]) {
 
 	if (encrypt(p, message)) {
 		cout << "\nOK\n" << endl;
+		return 0;
+	} else {
+		cout << "Error" << endl;
 		return 2;
 	}
 

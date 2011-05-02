@@ -4,5 +4,7 @@
 *.pdb
 Debug/
 Release/
-*.vcxproj*
+*.vcxproj.user
 stbmp
+*project
+*.bmp
