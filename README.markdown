@@ -12,8 +12,8 @@ Compilation
 
 * using gcc
 
-    cd stbmp
-    make
+        cd stbmp
+        make
 
 * using Visual Studio project files
 * any other
