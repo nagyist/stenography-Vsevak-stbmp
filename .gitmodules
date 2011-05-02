@@ -1,0 +1,3 @@
+[submodule "Bmp-manager"]
+	path = Bmp-manager
+	url = https://github.com/Shifter/Bmp-manager.git
