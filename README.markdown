@@ -22,10 +22,13 @@ Usage
 ---------------------
 
 You can encrypt or decrypt some message using command line arguments or just running programm.
+Optionally you can choise a char, that mark the end of your string.
 Using arguments:
 
-	stbmp [PATH]
-	      [PATH MESSAGE]
+    stbmp [-d [PATH [ stopchar= ] ]
+           -e [PATH MESSAGE [ stopchar= ] ]
+           -h | --help | -help ]
+
 
 Running programm just read the prompt
 
@@ -33,12 +36,12 @@ Running programm just read the prompt
 
 Encrypt `some_string_to_encypt` in `picture.bmp` using arguments:
 
-	$./stbmp /path/to/your/picture.bmp some_string_to_encypt
+	$./stbmp -e /path/to/your/picture.bmp some_string_to_encypt
 		OK
 
 Decrypt encrypted string form `picture.bmp` using arguments:
 
-	$./stbmp /path/to/your/picture.bmp
+	$./stbmp -d /path/to/your/picture.bmp
 	some_string_to_encypt
 
 

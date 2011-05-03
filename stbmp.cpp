@@ -80,7 +80,7 @@ bool encrypt(const char* path, string message) {
 	return true;
 }
 
-string decrypt(const char* path) {
+string decrypt(const char* path, const unsigned char stop_symbol) {
 	// Initialization
 	string message = "";
 	bmp<RGB24> image;
@@ -111,7 +111,7 @@ string decrypt(const char* path) {
 		m[6] = b[7 - 6];
 		m[7] = b[7 - 7];
 
-		if ((unsigned char) (m.to_ulong()) == '@')
+		if ((unsigned char) (m.to_ulong()) == stop_symbol)
 			break;
 
 		message += (unsigned char) (m.to_ulong());
@@ -127,46 +127,97 @@ string decrypt(const char* path) {
 
 int main(int argc, char* argv[]) {
 
-	string path;
-	string message;
+	string path, message, ini;
+	unsigned char stop_char = '@';
 
-	if (argc == 2) {
-		cout << decrypt(argv[1]);
+	if (argc > 1) { // Не включать в (argc > 2),
+					// используется в построчном вводе
+		ini = argv[1];
+	}
+	if (ini == "--help" || ini == "-help" || ini == "-h") {
+		cout << "You can encrypt or decrypt some message" << endl;
+		cout << "Hint: you can use command line with args:" << endl;
+		cout << "stbmp -d [PATH [ stopsymbol= ] ]\n"
+				"      -e [PATH MESSAGE [ stopsymbol= ] ]" << endl;
 		return 0;
-	} else if (argc == 3) {
-		path = argv[1];
-		message = argv[2];
-		message += "@";
-		if (encrypt(path.c_str(), message.c_str())) {
-			cout << "\tOK" << endl;
+	}
+	if (argc > 2) {
+		if (ini == "-d") {
+			switch (argc) {
+			case 3:
+				cout << decrypt(argv[2], stop_char);
+				return 0;
+			case 4:
+				stop_char = argv[3][9];
+				cout << decrypt(argv[2], stop_char);
+				return 0;
+			default:
+				cout << "Bag argument number " << argc << endl;
+				return 5;
+			}
+		} else if (ini == "-e") {
+			switch (argc) {
+			case 4:
+				path = argv[2];
+				message = argv[3];
+				break;
+			case 5:
+				path = argv[2];
+				message = argv[3];
+				stop_char = argv[4][9];
+				break;
+			default:
+				cout << "Bag argument number " << argc << endl;
+				return 5;
+			}
+			message += stop_char;
+			if (encrypt(path.c_str(), message.c_str())) {
+				cout << "\tOK" << endl;
+			} else {
+				cout << "Error" << endl;
+				return 2;
+			}
+			return 0;
 		} else {
-			cout << "Error" << endl;
-			return 2;
+			cout << "Bag argument " << ini << endl;
+			return 5;
 		}
-		return 0;
 	}
 
 	cout << "You can encrypt or decrypt some message" << endl;
 	cout << "Hint: you can use command line with args:" << endl;
-	cout << "stbmp [PATH]\n"
-			"      [PATH MESSAGE]" << endl;
+	cout << "stbmp -d [PATH [ stopsymbol= ] ]\n"
+			"      -e [PATH MESSAGE [ stopchar= ] ]\n"
+			"     [-h | --help | -help ]" << endl;
+
+	if (argc < 2) {
+		cout << ">>> To decrypt or to encrypt? input: 'd' or 'e'" << endl;
+		cin >> ini;
+	}
+
 	cout << ">>> Path to your picture?" << endl;
+	cin.ignore();
+	getline(cin, path, '\n');
 
-	getline(cin, path);
+	cout << ">>> Any stop char? (default '@')" << endl;
+	cin >> stop_char;
+	cin.ignore();
 
-	cout << ">>> Input '@' to decrypt or message to encrypt" << endl;
-
-	getline(cin, message);
-
-	const char* p = path.c_str();
-	if (message == "@") {
-		cout << decrypt(p);
+	if (ini == "d" || ini == "-d") {
+		cout << decrypt(path.c_str(), stop_char);
 		return 0;
 	}
 
-	message += "@";
+	if (ini != "-e" && ini != "e") {
+		cout << "Bad input" << endl;
+		return 3;
+	}
 
-	if (encrypt(p, message)) {
+	cout << ">>> Input message" << endl;
+	getline(cin, message, '\n');
+	message += stop_char;
+
+	if (encrypt(path.c_str(), message)) {
 		cout << "\nOK\n" << endl;
 		return 0;
 	} else {
