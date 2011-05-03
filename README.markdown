@@ -7,6 +7,14 @@ This is a simple C++ programm that hide message in least bits of bmp24 image.
 
 Use bmp lib [Bmp-manager](https://github.com/Shifter/Bmp-manager)
 
+How to get
+---------------------
+
+    cd <workspace>
+    git clone https://Vsevak@github.com/Vsevak/stbmp.git
+    git cd stbmp
+    git submodule update --init
+
 Compilation
 ---------------------
 
