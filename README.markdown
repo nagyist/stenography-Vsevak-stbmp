@@ -12,7 +12,7 @@ How to get
 
     cd <workspace>
     git clone https://Vsevak@github.com/Vsevak/stbmp.git
-    git cd stbmp
+    cd stbmp
     git submodule update --init
 
 Compilation
